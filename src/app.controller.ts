@@ -1,5 +1,4 @@
 import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
 import { MqttService } from './mqtt/mqtt.service';
 import { spawn, execSync, spawnSync, exec } from 'child_process';
 import { chdir, stderr } from 'process';
@@ -17,26 +16,21 @@ export class AppController {
 
   @Get('dev')
   dev() {
-    chdir('C:\\Users\\John\\Documents\\qingzhi-web')
+    chdir('../qingzhi-web')
     const sp = shell.exec('pnpm build', {async: true})
     sp.stdout.on('data', data=>{
       this.appService.client.publish('echo', data)
     })
-    return { message: 'dev begin...' };
+    return { message: 'dev begin...', topic: 'echo' };
   }
 
   @Get('build')
   build() {
-    chdir('C:\\Users\\John\\Documents\\qingzhi-web')
-    exec('pnpm build', (error, stdout, stderr) => {
-      console.log(stdout);
-    });
-
-    return { message: 'build begin...' };
+    return { message: 'build begin...' , topic: 'echo' };
   }
 
   @Get('dist')
   dist() {
-    return { message: 'success' };
+    return { message: 'dist begin...' , topic: 'echo' };
   }
 }
