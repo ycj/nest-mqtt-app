@@ -10,27 +10,40 @@ export class AppController {
   constructor(private readonly appService: MqttService) {}
 
   @Get()
-  getHello(): string {
-    return 'hylink DevOps system';
+  index() {
+    return {
+      version: '1.0.0',
+      mqtt: this.appService.client.connected
+    }
   }
 
   @Get('dev')
   dev() {
     chdir('../qingzhi-web')
-    const sp = shell.exec('pnpm build', {async: true})
-    sp.stdout.on('data', data=>{
-      this.appService.client.publish('echo', data)
-    })
     return { message: 'dev begin...', topic: 'echo' };
   }
 
   @Get('build')
   build() {
-    return { message: 'build begin...' , topic: 'echo' };
+    chdir('../qingzhi-web')
+    console.log(shell.exec('git checkout .').stdout)
+    console.log(shell.exec('git pull').stdout)
+    console.log(shell.exec('pnpm install').stdout)
+    console.log(shell.exec('node version.js').stdout)
+    console.log(shell.exec('pnpm build').stdout)
+    // console.log(shell.exec('git pull'))
+
+    // const sp = shell.exec('pnpm build', {async: true})
+    // sp.stdout.on('data', data=>{
+    //   console.log(data)
+    //   this.appService.client.publish('echo', data)
+    // })
+
+    return '编译打包...'
   }
 
   @Get('dist')
   dist() {
-    return { message: 'dist begin...' , topic: 'echo' };
+    return 'dist';
   }
 }
